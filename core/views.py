@@ -77,15 +77,11 @@ def create_order(request):
         payment_url = f'{site_base}/pay?token={order.token}'
 
         # Send email
-        try:
-            send_payment_email(smtp_user, smtp_password, customer_email, order.invoice_num, order.total, payment_url)
-            msg = f'Payment link sent to {customer_email}'
-        except Exception as email_err:
-            msg = f'Order created, but email blocked by server: {str(email_err)}'
+        send_payment_email(smtp_user, smtp_password, customer_email, order.invoice_num, order.total, payment_url)
 
         return JsonResponse({
             'status': 'success',
-            'message': msg,
+            'message': f'Payment link sent to {customer_email}',
             'payment_url': payment_url,
             'token': str(order.token)
         })
@@ -230,6 +226,9 @@ def initiate_ccavenue(request):
         
         plain_text = urllib.parse.urlencode(params)
         encRequest = encrypt_ccavenue(plain_text, working_key)
+
+        if not encRequest:
+            return JsonResponse({'status': 'error', 'message': 'Encryption failed: encRequest is empty. Check the working key in config.json.'}, status=500)
 
         return JsonResponse({
             'status': 'success',

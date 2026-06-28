@@ -18,14 +18,15 @@ def get_aes_cipher(working_key, mode):
     return AES.new(key, mode, iv)
 
 def encrypt_ccavenue(plain_text, working_key):
-    try:
-        cipher = get_aes_cipher(working_key, AES.MODE_CBC)
-        padded_data = pad(plain_text.encode('utf-8'), AES.block_size)
-        encrypted_data = cipher.encrypt(padded_data)
-        return hexlify(encrypted_data).decode('utf-8')
-    except Exception as e:
-        print(f"Encryption error: {e}")
-        return ""
+    """Encrypt plain_text with AES-CBC using working_key.
+    Raises on failure so callers can surface a real error message."""
+    cipher = get_aes_cipher(working_key, AES.MODE_CBC)
+    padded_data = pad(plain_text.encode('utf-8'), AES.block_size)
+    encrypted_data = cipher.encrypt(padded_data)
+    enc = hexlify(encrypted_data).decode('utf-8')
+    if not enc:
+        raise ValueError("Encryption produced an empty result. Check the working key.")
+    return enc
 
 def decrypt_ccavenue(encrypted_text, working_key):
     try:
