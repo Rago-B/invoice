@@ -76,15 +76,24 @@ def create_order(request):
         site_base = config.get('base_url', 'http://localhost:8000').strip().rstrip('/')
         payment_url = f'{site_base}/pay?token={order.token}'
 
-        # Send email
-        send_payment_email(smtp_user, smtp_password, customer_email, order.invoice_num, order.total, payment_url)
+        # Send email (non-fatal: order is created regardless of email success)
+        email_warning = None
+        try:
+            send_payment_email(smtp_user, smtp_password, customer_email, order.invoice_num, order.total, payment_url)
+        except Exception as email_err:
+            email_warning = f'Order created but email failed: {str(email_err)}'
+            print(f'[WARN] Email send failed: {email_err}')
 
-        return JsonResponse({
+        response = {
             'status': 'success',
-            'message': f'Payment link sent to {customer_email}',
+            'message': f'Payment link sent to {customer_email}' if not email_warning else f'Order created (email failed — copy link manually)',
             'payment_url': payment_url,
             'token': str(order.token)
-        })
+        }
+        if email_warning:
+            response['email_warning'] = email_warning
+
+        return JsonResponse(response)
 
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': f'Error creating order: {str(e)}'}, status=500)

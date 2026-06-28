@@ -42,12 +42,26 @@ def decrypt_ccavenue(encrypted_text, working_key):
 # ── Email helpers ─────────────────────────────────────────────────────────
 
 SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_PORT_SSL = 465
+SMTP_PORT_TLS = 587
 
-def send_payment_email(smtp_user, smtp_password, recipient, invoice_num, total, payment_url):
-    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
+def _get_smtp_server(smtp_user, smtp_password):
+    """Connect to Gmail SMTP. Tries port 465 (SSL) first, then 587 (STARTTLS).
+    Render free tier blocks port 587, so SSL on 465 is the reliable option."""
+    try:
+        server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT_SSL, timeout=15)
+        server.login(smtp_user, smtp_password)
+        return server
+    except Exception:
+        pass
+    # Fallback to STARTTLS on 587
+    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT_TLS, timeout=15)
     server.starttls()
     server.login(smtp_user, smtp_password)
+    return server
+
+def send_payment_email(smtp_user, smtp_password, recipient, invoice_num, total, payment_url):
+    server = _get_smtp_server(smtp_user, smtp_password)
 
     msg = MIMEMultipart("alternative")
     msg["From"] = smtp_user
@@ -85,9 +99,7 @@ def send_invoice_email(user, password, recipients, invoice_num, pdf_base64):
         pdf_base64 = pdf_base64.split(",")[1]
     pdf_data = base64.b64decode(pdf_base64)
 
-    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-    server.starttls()
-    server.login(user, password)
+    server = _get_smtp_server(user, password)
 
     for recipient in recipients:
         msg = MIMEMultipart()
