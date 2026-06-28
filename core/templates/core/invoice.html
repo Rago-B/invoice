@@ -1832,7 +1832,7 @@
                             });
                         })
                         .catch(err => {
-                            showModalStatus('error', 'Network error. Make sure the python server is running.');
+                            showModalStatus('error', 'Network error. Could not connect to the server.');
                         });
                 });
             }
@@ -1977,7 +1977,7 @@
                 }
             } catch (e) {
                 statusDiv.style.color = '#c0392b';
-                statusDiv.textContent = 'Network error. Make sure the backend server (port 8002) is running.';
+                statusDiv.textContent = 'Network error. Could not connect to the server. Please wait for it to start.';
             }
         }
 

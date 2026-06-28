@@ -27,12 +27,12 @@ def get_config():
         pass
     
     return {
-        "smtp_user": getattr(settings, 'SMTP_USER', ''),
-        "smtp_password": getattr(settings, 'SMTP_PASSWORD', ''),
-        "ccavenue_merchant_id": getattr(settings, 'CCAVENUE_MERCHANT_ID', ''),
-        "ccavenue_access_code": getattr(settings, 'CCAVENUE_ACCESS_CODE', ''),
-        "ccavenue_working_key": getattr(settings, 'CCAVENUE_WORKING_KEY', ''),
-        "base_url": getattr(settings, 'BASE_URL', 'http://localhost:8000')
+        "smtp_user": os.environ.get('SMTP_USER', getattr(settings, 'SMTP_USER', '')),
+        "smtp_password": os.environ.get('SMTP_PASSWORD', getattr(settings, 'SMTP_PASSWORD', '')),
+        "ccavenue_merchant_id": os.environ.get('CCAVENUE_MERCHANT_ID', getattr(settings, 'CCAVENUE_MERCHANT_ID', '')),
+        "ccavenue_access_code": os.environ.get('CCAVENUE_ACCESS_CODE', getattr(settings, 'CCAVENUE_ACCESS_CODE', '')),
+        "ccavenue_working_key": os.environ.get('CCAVENUE_WORKING_KEY', getattr(settings, 'CCAVENUE_WORKING_KEY', '')),
+        "base_url": os.environ.get('BASE_URL', getattr(settings, 'BASE_URL', 'http://localhost:8000'))
     }
 
 @csrf_exempt
