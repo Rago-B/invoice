@@ -44,7 +44,7 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
 def send_payment_email(smtp_user, smtp_password, recipient, invoice_num, total, payment_url):
-    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
     server.starttls()
     server.login(smtp_user, smtp_password)
 
@@ -84,7 +84,7 @@ def send_invoice_email(user, password, recipients, invoice_num, pdf_base64):
         pdf_base64 = pdf_base64.split(",")[1]
     pdf_data = base64.b64decode(pdf_base64)
 
-    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
     server.starttls()
     server.login(user, password)
 
