@@ -1810,7 +1810,7 @@
                     if (bgImg && srcToRestore) bgImg.setAttribute('src', srcToRestore);
 
                     // Post to backend
-                    fetch('/send-email', {
+                    fetch('/send-email/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1832,7 +1832,7 @@
                             });
                         })
                         .catch(err => {
-                            showModalStatus('error', 'Network error. Could not connect to the server.');
+                            showModalStatus('error', 'Network error. Could not process your request. Please try again later.');
                         });
                 });
             }
@@ -1959,7 +1959,7 @@
             };
 
             try {
-                const response = await fetch('/create-order', {
+                const response = await fetch('/create-order/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -1977,7 +1977,7 @@
                 }
             } catch (e) {
                 statusDiv.style.color = '#c0392b';
-                statusDiv.textContent = 'Network error. Could not connect to the server. Please wait for it to start.';
+                statusDiv.textContent = 'Network error. Could not process your request. Please try again later.';
             }
         }
 

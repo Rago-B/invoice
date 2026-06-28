@@ -1019,7 +1019,7 @@
         if (errorAlert) errorAlert.style.display = 'none';
 
         try {
-          const res = await fetch('/initiate-ccavenue', {
+          const res = await fetch('/initiate-ccavenue/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: ORDER.token })
@@ -1228,7 +1228,7 @@
         };
 
         try {
-          const res = await fetch('/submit-details', {
+          const res = await fetch('/submit-details/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
